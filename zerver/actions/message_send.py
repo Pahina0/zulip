@@ -876,6 +876,8 @@ def create_user_messages(
         )
         user_messages.append(um)
 
+    print(">>> create_user_messages called")
+    print("followed_user_push_user_ids =", followed_user_push_user_ids)
     return user_messages
 
 
@@ -1192,6 +1194,8 @@ def do_send_messages(
                 stream_wildcard_mention_user_ids=send_request.stream_wildcard_mention_user_ids,
                 followed_topic_push_user_ids=send_request.followed_topic_push_user_ids,
                 followed_topic_email_user_ids=send_request.followed_topic_email_user_ids,
+                followed_user_push_user_ids=send_request.followed_user_push_user_ids,
+                followed_user_email_user_ids=send_request.followed_user_email_user_ids,
                 topic_wildcard_mention_in_followed_topic_user_ids=send_request.topic_wildcard_mention_in_followed_topic_user_ids,
                 stream_wildcard_mention_in_followed_topic_user_ids=send_request.stream_wildcard_mention_in_followed_topic_user_ids,
                 muted_sender_user_ids=send_request.muted_sender_user_ids,
@@ -1232,6 +1236,8 @@ def do_send_messages(
             stream_wildcard_mention_user_ids=list(send_request.stream_wildcard_mention_user_ids),
             followed_topic_push_user_ids=list(send_request.followed_topic_push_user_ids),
             followed_topic_email_user_ids=list(send_request.followed_topic_email_user_ids),
+            followed_user_push_user_ids=list(send_request.followed_user_push_user_ids),
+            followed_user_email_user_ids=list(send_request.followed_user_email_user_ids),
             topic_wildcard_mention_in_followed_topic_user_ids=list(
                 send_request.topic_wildcard_mention_in_followed_topic_user_ids
             ),

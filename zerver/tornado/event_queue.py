@@ -1184,13 +1184,15 @@ def process_message_event(
             stream_wildcard_mention_user_ids=stream_wildcard_mention_user_ids,
             followed_topic_push_user_ids=followed_topic_push_user_ids,
             followed_topic_email_user_ids=followed_topic_email_user_ids,
+            followed_user_push_user_ids=set(event_template.get("followed_user_push_user_ids", [])),
+            followed_user_email_user_ids=set(event_template.get("followed_user_email_user_ids", [])),
             topic_wildcard_mention_in_followed_topic_user_ids=topic_wildcard_mention_in_followed_topic_user_ids,
             stream_wildcard_mention_in_followed_topic_user_ids=stream_wildcard_mention_in_followed_topic_user_ids,
             muted_sender_user_ids=muted_sender_user_ids,
             all_bot_user_ids=all_bot_user_ids,
             push_device_registered_user_ids=push_device_registered_user_ids,
         )
-
+        
         # Calling asdict would be slow, as it does a deep copy; pull
         # the attributes out directly and perform a shallow copy, as
         # we do intend to adjust the dict.

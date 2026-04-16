@@ -25,6 +25,8 @@ class UserMessageNotificationsData:
     stream_email_notify: bool
     followed_topic_push_notify: bool
     followed_topic_email_notify: bool
+    followed_user_push_notify: bool
+    followed_user_email_notify: bool
     topic_wildcard_mention_in_followed_topic_push_notify: bool
     topic_wildcard_mention_in_followed_topic_email_notify: bool
     stream_wildcard_mention_in_followed_topic_push_notify: bool
@@ -67,6 +69,8 @@ class UserMessageNotificationsData:
         stream_wildcard_mention_user_ids: set[int],
         followed_topic_push_user_ids: set[int],
         followed_topic_email_user_ids: set[int],
+        followed_user_push_user_ids: set[int],
+        followed_user_email_user_ids: set[int],
         topic_wildcard_mention_in_followed_topic_user_ids: set[int],
         stream_wildcard_mention_in_followed_topic_user_ids: set[int],
         muted_sender_user_ids: set[int],
@@ -90,6 +94,8 @@ class UserMessageNotificationsData:
                 stream_email_notify=False,
                 followed_topic_push_notify=False,
                 followed_topic_email_notify=False,
+                followed_user_push_notify=False,
+                followed_user_email_notify=False,
                 topic_wildcard_mention_in_followed_topic_push_notify=False,
                 topic_wildcard_mention_in_followed_topic_email_notify=False,
                 stream_wildcard_mention_in_followed_topic_push_notify=False,
@@ -177,6 +183,10 @@ class UserMessageNotificationsData:
         followed_topic_push_notify = (
             push_device_registered and user_id in followed_topic_push_user_ids
         )
+        followed_user_push_notify = (
+            push_device_registered and user_id in followed_user_push_user_ids
+        )
+        followed_user_email_notify = user_id in followed_user_email_user_ids
         return cls(
             user_id=user_id,
             dm_email_notify=dm_email_notify,
@@ -198,6 +208,8 @@ class UserMessageNotificationsData:
             stream_wildcard_mention_in_followed_topic_email_notify=stream_wildcard_mention_in_followed_topic_email_notify,
             sender_is_muted=user_id in muted_sender_user_ids,
             disable_external_notifications=disable_external_notifications,
+            followed_user_push_notify=followed_user_push_notify,
+            followed_user_email_notify=followed_user_email_notify,
         )
 
     # For these functions, acting_user_id is the user sent a message
@@ -251,6 +263,8 @@ class UserMessageNotificationsData:
             return NotificationTriggers.STREAM_WILDCARD_MENTION
         elif self.followed_topic_push_notify:
             return NotificationTriggers.FOLLOWED_TOPIC_PUSH
+        elif self.followed_user_push_notify:
+            return NotificationTriggers.FOLLOWED_USER_PUSH
         elif self.stream_push_notify:
             return NotificationTriggers.STREAM_PUSH
         else:
@@ -283,6 +297,8 @@ class UserMessageNotificationsData:
             return NotificationTriggers.STREAM_WILDCARD_MENTION
         elif self.followed_topic_email_notify:
             return NotificationTriggers.FOLLOWED_TOPIC_EMAIL
+        elif self.followed_user_email_notify:
+            return NotificationTriggers.FOLLOWED_USER_EMAIL
         elif self.stream_email_notify:
             return NotificationTriggers.STREAM_EMAIL
         else:

@@ -72,4 +72,12 @@ def get_followers_who_can_see_stream_message(
     )
 
     # Return intersection: followers with push notifications AND subscribers to the stream
-    return set(followers_with_push) & set(stream_subscribers)
+    result = set(followers_with_push) & set(stream_subscribers)
+
+    print("FOLLOW NOTIF DEBUG:")
+    print("followed_user_id:", followed_user_id)
+    print("followers_with_push:", list(followers_with_push))
+    print("stream_subscribers:", list(stream_subscribers))
+    print("FINAL RESULT:", result)
+
+    return result
