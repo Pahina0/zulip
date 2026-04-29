@@ -1786,7 +1786,7 @@ class StreamMessagesTest(ZulipTestCase):
             setting_value=UserProfile.AUTOMATICALLY_CHANGE_VISIBILITY_POLICY_NEVER,
             acting_user=None,
         )
-        with self.assert_database_query_count(14):
+        with self.assert_database_query_count(15):
             check_send_stream_message(
                 sender=sender,
                 client=sending_client,

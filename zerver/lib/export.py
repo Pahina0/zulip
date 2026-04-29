@@ -58,6 +58,7 @@ from zerver.models import (
     CustomProfileFieldValue,
     DefaultStream,
     DirectMessageGroup,
+    FollowedUser,
     GroupGroupMembership,
     Message,
     MutedUser,
@@ -165,6 +166,7 @@ ALL_ZULIP_TABLES = {
     "zerver_draft",
     "zerver_emailchangestatus",
     "zerver_externalauthid",
+    "zerver_followeduser",
     "zerver_groupgroupmembership",
     "zerver_huddle",
     "zerver_imageattachment",
@@ -1240,6 +1242,14 @@ def add_user_profile_child_configs(user_profile_config: Config) -> None:
         include_rows="user_profile_id__in",
         # Values of a user's custom profile fields are public.
         limit_to_consenting_users=False,
+    )
+
+    Config(
+        table="zerver_followeduser",
+        model=FollowedUser,
+        normal_parent=user_profile_config,
+        include_rows="user_profile_id__in",
+        limit_to_consenting_users=True,
     )
 
     Config(
