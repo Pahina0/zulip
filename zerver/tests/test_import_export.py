@@ -55,6 +55,7 @@ from zerver.lib.export import (
     do_export_user,
     get_consented_user_ids,
 )
+from zerver.lib.followed_users import add_user_follow
 from zerver.lib.import_realm import do_import_realm, get_db_table, get_incoming_message_ids
 from zerver.lib.migration_status import STALE_MIGRATIONS, AppMigrations, MigrationStatusJson
 from zerver.lib.streams import create_stream_if_needed
@@ -3493,6 +3494,14 @@ class SingleUserExportTest(ExportFile):
         @checker
         def zerver_alertword(records: list[Record]) -> None:
             self.assertEqual(records[-1]["word"], "pizza")
+
+        add_user_follow(cordelia, hamlet, now)
+
+        @checker
+        def zerver_followeduser(records: list[Record]) -> None:
+            (rec,) = records
+            self.assertEqual(rec["user_profile"], cordelia.id)
+            self.assertEqual(rec["followed_user"], hamlet.id)
 
         ExternalAuthID.objects.create(
             user=cordelia,

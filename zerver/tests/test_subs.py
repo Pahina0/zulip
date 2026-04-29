@@ -5147,7 +5147,7 @@ class SubscriptionAPITest(ZulipTestCase):
         new_stream_announcements_stream = get_stream(self.streams[0], self.test_realm)
         self.test_realm.new_stream_announcements_stream_id = new_stream_announcements_stream.id
         self.test_realm.save()
-        with self.assert_database_query_count(57):
+        with self.assert_database_query_count(58):
             self.subscribe_via_post(
                 self.test_user,
                 [new_streams[2]],
