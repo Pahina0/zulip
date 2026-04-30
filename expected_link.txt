@@ -1,0 +1,1 @@
+* [Follow a user](/api/follow-user)

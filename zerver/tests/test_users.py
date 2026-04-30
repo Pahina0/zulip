@@ -2916,6 +2916,8 @@ class RecipientInfoTest(ZulipTestCase):
             stream_wildcard_mention_user_ids=set(),
             followed_topic_push_user_ids=set(),
             followed_topic_email_user_ids=set(),
+            followed_user_push_user_ids=set(),
+            followed_user_email_user_ids=set(),
             topic_wildcard_mention_in_followed_topic_user_ids=set(),
             stream_wildcard_mention_in_followed_topic_user_ids=set(),
             muted_sender_user_ids=set(),

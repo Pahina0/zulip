@@ -2718,6 +2718,50 @@ paths:
                             - type: object
                               additionalProperties: false
                               description: |
+                                Event sent when the set of users that the current user is
+                                following has changed.
+
+                                **Changes**: New in Zulip 11.0 (feature level 414).
+                              properties:
+                                id:
+                                  $ref: "#/components/schemas/EventIdSchema"
+                                type:
+                                  allOf:
+                                    - $ref: "#/components/schemas/EventTypeSchema"
+                                    - enum:
+                                        - followed_users
+                                followed_users:
+                                  type: array
+                                  description: |
+                                    A list of dictionaries where each dictionary describes
+                                    a user that the current user is following.
+                                  items:
+                                    type: object
+                                    additionalProperties: false
+                                    description: |
+                                      Object containing the user ID and timestamp for a follow.
+                                    properties:
+                                      id:
+                                        type: integer
+                                        description: |
+                                          The ID of the followed user.
+                                      timestamp:
+                                        type: integer
+                                        description: |
+                                          An integer UNIX timestamp representing when the user was followed.
+                              example:
+                                {
+                                  "type": "followed_users",
+                                  "followed_users":
+                                    [
+                                      {"id": 1, "timestamp": 1594825442},
+                                      {"id": 22, "timestamp": 1654865392},
+                                    ],
+                                  "id": 0,
+                                }
+                            - type: object
+                              additionalProperties: false
+                              description: |
                                 Heartbeat events are sent by the server to avoid
                                 longpolling connections being affected by networks that
                                 kill idle HTTP connections.
@@ -13777,6 +13821,100 @@ paths:
                           }
                         description: |
                           An example JSON response for when the user is not previously muted:
+  /users/me/followed_users/{followed_user_id}:
+    post:
+      operationId: follow-user
+      summary: Follow a user
+      tags: ["users"]
+      description: |
+        Follow a user from the perspective of the requesting user.
+        Following a user allows receiving push notifications when they send
+        messages to channels that the requesting user is subscribed to,
+        if the requesting user has enabled the `enable_followed_user_push_notifications`
+        setting.
+
+        **Changes**: New in Zulip 11.0 (feature level 414).
+      parameters:
+        - $ref: "#/components/parameters/FollowedUserId"
+      responses:
+        "200":
+          $ref: "#/components/responses/SimpleSuccess"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - allOf:
+                      - $ref: "#/components/schemas/CodedError"
+                      - example:
+                          {
+                            "code": "BAD_REQUEST",
+                            "msg": "Cannot follow self",
+                            "result": "error",
+                          }
+                        description: |
+                          An example JSON response for when the user ID is the current
+                          user's ID:
+                  - allOf:
+                      - $ref: "#/components/schemas/CodedError"
+                      - example:
+                          {
+                            "code": "BAD_REQUEST",
+                            "msg": "No such user",
+                            "result": "error",
+                          }
+                        description: |
+                          An example JSON response for when the user is nonexistent or inaccessible:
+                  - allOf:
+                      - $ref: "#/components/schemas/CodedError"
+                      - example:
+                          {
+                            "code": "BAD_REQUEST",
+                            "msg": "Already following this user",
+                            "result": "error",
+                          }
+                        description: |
+                          An example JSON response for when the user is already followed:
+    delete:
+      operationId: unfollow-user
+      summary: Unfollow a user
+      tags: ["users"]
+      description: |
+        Unfollow a user from the perspective of the requesting user.
+
+        **Changes**: New in Zulip 11.0 (feature level 414).
+      parameters:
+        - $ref: "#/components/parameters/FollowedUserId"
+      responses:
+        "200":
+          $ref: "#/components/responses/SimpleSuccess"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - allOf:
+                      - $ref: "#/components/schemas/CodedError"
+                      - example:
+                          {
+                            "code": "BAD_REQUEST",
+                            "msg": "No such user",
+                            "result": "error",
+                          }
+                        description: |
+                          An example JSON response for when the user is nonexistent or inaccessible:
+                  - allOf:
+                      - $ref: "#/components/schemas/CodedError"
+                      - example:
+                          {
+                            "code": "BAD_REQUEST",
+                            "msg": "User is not followed",
+                            "result": "error",
+                          }
+                        description: |
+                          An example JSON response for when the user is not previously followed:
   /users/me/apns_device_token:
     post:
       deprecated: true
@@ -18131,6 +18269,27 @@ paths:
                                 The list of users other than the current user in the direct message
                                 conversation. This will be an empty list for direct messages sent to
                                 oneself.
+                      followed_users:
+                        description: |
+                          Present if `followed_users` is present in `fetch_event_types`.
+
+                          An array of dictionaries where each dictionary describes a user
+                          that the current user is following.
+
+                          **Changes**: New in Zulip 11.0 (feature level 414).
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties: false
+                          properties:
+                            id:
+                              type: integer
+                              description: |
+                                The ID of the user being followed.
+                            timestamp:
+                              type: integer
+                              description: |
+                                The POSIX timestamp for when the user was followed.
                       navigation_views:
                         type: array
                         items:
@@ -30228,6 +30387,15 @@ components:
 
         **Changes**: Before Zulip 8.0 (feature level 188), bot users could not
         be muted/unmuted, and specifying a bot user's ID returned an error response.
+      schema:
+        type: integer
+      example: 10
+      required: true
+    FollowedUserId:
+      name: followed_user_id
+      in: path
+      description: |
+        The ID of the user to follow/unfollow.
       schema:
         type: integer
       example: 10
